@@ -3,13 +3,20 @@
  */
 var Client = require('./chat-client.js');
 var chatroom = require('./chatroom.js');
+var Task = require('./lib/Task.js').task;
 
 
-var ct = new Client();
+var client = new Client();
 
 
-chatroom.event.on("send",ct.sendMessge);
+Task.task("send", (data)=>{
+    client.sendMessge(data);
+});
 
-ct.output=chatroom.Render;
+Task.dataflow("chatClient",data=>{
+    chatroom.Render(data);
+    console.log(JSON.stringify(data) );
+});
 
-chatroom.Render({messages:[]});
+chatroom.Render({});
+

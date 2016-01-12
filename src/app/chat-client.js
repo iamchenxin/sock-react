@@ -2,8 +2,15 @@
  * Created by iamchenxin on 1/9/16.
  */
 var io =require('socket.io-client');
+var Task = require('./lib/Task.js').task;
 var socket = io();
-
+socket.__proto__.wait = function(name){
+    return new Promise((resolve,reject)=>{
+        this.on(name,data=>{
+           resolve(data);
+        });
+    })
+} ;
 
 class chatClient{
     constructor(){
@@ -12,18 +19,10 @@ class chatClient{
             messages:[]
         };
 
-
-        this.socket.on("new message",this._onNewMessage);
-        this.output=this.defaultOutput;
-    }
-
-    _onNewMessage=(data)=>{
-        this.chatData.messages.push(data);
-        this.output(  this.chatData);
-    };
-
-    defaultOutput(data){
-        console.log(JSON.stringify(data));
+        this.socket.on("new message",data=>{
+            this.chatData.messages.push(data);
+            Task.outPut("chatClient",this.chatData);
+        })
     }
 
     sendMessge=(data)=>{

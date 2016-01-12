@@ -5,8 +5,8 @@ var React = require("react");
 var ReactDOM = require('react-dom');
 var io = require('socket.io-client');
 let socket =io();
-var EventEmitter = require('events');
-var ChatRoomEvent = new EventEmitter();
+var Task = require('./lib/Task.js').task;
+
 
 // user , message
 function Message(props){
@@ -46,7 +46,7 @@ class InputBox extends React.Component{
 
     handleSend=(event)=>{
         event.preventDefault();
-        ChatRoomEvent.emit("send",{
+        Task.emit("send",{
             user:this._inputUser.value,
             message:this.state.inputText}
         );
@@ -89,7 +89,6 @@ class ChatRoom extends React.Component{
 
 
     render(){
-        console.log(this.props);
         return (
             <div>
                 <ChatScreen {...this.props}/>
@@ -100,7 +99,7 @@ class ChatRoom extends React.Component{
 }
 
 
-export var event = ChatRoomEvent;
+
 export function Render(data){
     ReactDOM.render(<ChatRoom {...data}/>,document.getElementById("contain"));
 }
