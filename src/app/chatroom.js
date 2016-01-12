@@ -16,13 +16,15 @@ function Message(props){
 }
 
 function ChatScreen(props){
-    console.dir(props);
+
     return (
       <div>
           {(()=>{
-            return props.messages.map(message=>{
-                return (<Message {...message} />);
-            }) ;
+              if(props.messages){
+                  return props.messages.map(message=>{
+                      return (<Message {...message} />);
+                  }) ;
+              }
           })()}
       </div>
     );
@@ -50,7 +52,16 @@ class InputBox extends React.Component{
         );
     };
 
+    shouldComponentUpdate(nextProps, nextState){
+        if(nextState.inputText==this.state.inputText){
+            return false;
+        }else {
+            return true;
+        }
+    }
+
     render(){
+        console.log("InputBox update");
         return (
             <form onSubmit={this.handleSend}>
                 <input type="text" onChange={this.handleInput} value={this.state.inputText} />
@@ -62,14 +73,32 @@ class InputBox extends React.Component{
     }
 }
 
-function ChatRoom(props){
-    return (
-        <div>
-            <ChatScreen {...props}/>
-            <InputBox />
-        </div>
-    );
+class ChatRoom extends React.Component{
+    constructor(props){
+        super(props);
+    }
+
+    static defaultProps={
+        messages:[
+            {
+                user:"none",
+                message:"should not be there"
+            }
+        ]
+    };
+
+
+    render(){
+        console.log(this.props);
+        return (
+            <div>
+                <ChatScreen {...this.props}/>
+                <InputBox />
+            </div>
+        );
+    }
 }
+
 
 export var event = ChatRoomEvent;
 export function Render(data){
